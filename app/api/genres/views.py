@@ -1,12 +1,16 @@
-from flask_restx import Resource, Namespace
+from flask_restx import Resource
+from . import api
+from app import db
 
-from dao.model.genre import GenreSchema
-from implemented import genre_service
+from .models import GenreSchema
+from .dao import GenreDAO
+from .services import GenreService
 
-genre_ns = Namespace('genres')
+genre_dao = GenreDAO(session=db.session)
+genre_service = GenreService(dao=genre_dao)
 
 
-@genre_ns.route('/')
+@api.route('/')
 class GenresView(Resource):
     def get(self):
         rs = genre_service.get_all()
@@ -14,7 +18,7 @@ class GenresView(Resource):
         return res, 200
 
 
-@genre_ns.route('/<int:rid>')
+@api.route('/<int:rid>')
 class GenreView(Resource):
     def get(self, rid):
         r = genre_service.get_one(rid)
