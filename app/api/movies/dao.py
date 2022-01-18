@@ -1,4 +1,4 @@
-from dao.model.movie import Movie
+from .models import Movie
 
 
 class MovieDAO:

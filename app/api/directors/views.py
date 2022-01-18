@@ -1,12 +1,15 @@
-from flask_restx import Resource, Namespace
+from flask_restx import Resource
+from . import api
+from app import db
+from .models import DirectorSchema
+from .dao import DirectorDAO
+from .services import DirectorService
 
-from dao.model.director import DirectorSchema
-from implemented import director_service
-
-director_ns = Namespace('directors')
+director_dao = DirectorDAO(session=db.session)
+director_service = DirectorService(dao=director_dao)
 
 
-@director_ns.route('/')
+@api.route('/')
 class DirectorsView(Resource):
     def get(self):
         rs = director_service.get_all()
@@ -14,7 +17,7 @@ class DirectorsView(Resource):
         return res, 200
 
 
-@director_ns.route('/<int:rid>')
+@api.route('/<int:rid>')
 class DirectorView(Resource):
     def get(self, rid):
         r = director_service.get_one(rid)

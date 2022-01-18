@@ -1,13 +1,16 @@
 from flask import request
-from flask_restx import Resource, Namespace
+from flask_restx import Resource
+from . import api
+from app import db
+from .models import MovieSchema
+from .dao import MovieDAO
+from .services import MovieService
 
-from dao.model.movie import MovieSchema
-from implemented import movie_service
-
-movie_ns = Namespace('movies')
+movie_dao = MovieDAO(session=db.session)
+movie_service = MovieService(dao=movie_dao)
 
 
-@movie_ns.route('/')
+@api.route('/')
 class MoviesView(Resource):
     def get(self):
         director = request.args.get("director_id")
@@ -28,7 +31,7 @@ class MoviesView(Resource):
         return "", 201, {"location": f"/movies/{movie.id}"}
 
 
-@movie_ns.route('/<int:bid>')
+@api.route('/<int:bid>')
 class MovieView(Resource):
     def get(self, bid):
         b = movie_service.get_one(bid)
